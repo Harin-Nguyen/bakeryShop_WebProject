@@ -84,7 +84,7 @@ export const assets = {
 
 export const menu_list = [
     {
-        menu_name: "Chocolatte",
+        menu_name: "Cakey",
         menu_image: menu_1
     },
     {
@@ -100,15 +100,15 @@ export const menu_list = [
         menu_image: menu_4
     },
     {
-        menu_name: "Groundy",
+        menu_name: "Panna Cotta",
         menu_image: menu_5
     },
     {
-        menu_name: "Pancake",
+        menu_name: "Ice Cream",
         menu_image: menu_6
     },
     {
-        menu_name: "Milky",
+        menu_name: "Bread",
         menu_image: menu_7
     },
     {
@@ -119,232 +119,232 @@ export const menu_list = [
 export const food_list = [
     {
         _id: "1",
-        name: "Greek salad",
+        name: "Cookies Chip",
         image: food_1,
-        price: 12,
-        description: "Food provides essential nutrients for overall health and well-being",
-        category: "Salad"
+        price: 2,
+        description: "Delicious, freshly baked cookies with crisp edges and chewy centers",
+        category: "Cookies"
     },
     {
         _id: "2",
-        name: "Veg salad",
+        name: "Choco Berries",
         image: food_2,
-        price: 18,
-        description: "Food provides essential nutrients for overall health and well-being",
-        category: "Salad"
+        price: 6,
+        description: "Rich chocolate cake with fresh berries, a perfect indulgence",
+        category: "Cakey"
     }, {
         _id: "3",
-        name: "Clover Salad",
+        name: "Almond Croissant",
         image: food_3,
-        price: 16,
-        description: "Food provides essential nutrients for overall health and well-being",
-        category: "Salad"
+        price: 1.5,
+        description: "Flaky croissant filled with rich almond paste, a delightful treat",
+        category: "Croissant"
     }, {
         _id: "4",
-        name: "Chicken Salad",
+        name: "Pistachio Croissant",
         image: food_4,
-        price: 24,
-        description: "Food provides essential nutrients for overall health and well-being",
-        category: "Salad"
+        price: 2,
+        description: "Flaky croissant with a rich pistachio filling, simply irresistible",
+        category: "Croissant"
     }, {
         _id: "5",
-        name: "Lasagna Rolls",
+        name: "Rainbowsier",
         image: food_5,
-        price: 14,
-        description: "Food provides essential nutrients for overall health and well-being",
-        category: "Rolls"
+        price: 7,
+        description: "Soft, fluffy donut with a sweet glaze, simply irresistible",
+        category: "Donut"
     }, {
         _id: "6",
-        name: "Peri Peri Rolls",
+        name: "Peri Peri Macaron",
         image: food_6,
-        price: 12,
-        description: "Food provides essential nutrients for overall health and well-being",
-        category: "Rolls"
+        price: 10,
+        description: "Delicate, colorful macarons with a creamy filling, simply delightful",
+        category: "Macaron"
     }, {
         _id: "7",
-        name: "Chicken Rolls",
+        name: "Pan Tropicaly",
         image: food_7,
-        price: 20,
-        description: "Food provides essential nutrients for overall health and well-being",
-        category: "Rolls"
+        price: 3,
+        description: "Fluffy pancake crepes with tropical fruits, a refreshing delight",
+        category: "Bread"
     }, {
         _id: "8",
-        name: "Veg Rolls",
+        name: "Soffy Bread",
         image: food_8,
-        price: 15,
-        description: "Food provides essential nutrients for overall health and well-being",
-        category: "Rolls"
+        price: 3,
+        description: "Soft, fluffy bread with a rich, creamy milk flavor",
+        category: "Bread"
     }, {
         _id: "9",
-        name: "Ripple Ice Cream",
+        name: "Mango Cotta",
         image: food_9,
-        price: 14,
-        description: "Food provides essential nutrients for overall health and well-being",
-        category: "Deserts"
+        price: 1,
+        description: "Silky panna cotta with fresh mango, a tropical delight",
+        category: "Panna Cotta"
     }, {
         _id: "10",
-        name: "Fruit Ice Cream",
+        name: "Lemonade Cookies",
         image: food_10,
-        price: 22,
-        description: "Food provides essential nutrients for overall health and well-being",
-        category: "Deserts"
+        price: 7,
+        description: "Zesty lemon cookies with a sweet glaze, a perfect treat",
+        category: "Cookies"
     }, {
         _id: "11",
-        name: "Jar Ice Cream",
+        name: "Strawberries Matcha",
         image: food_11,
-        price: 10,
-        description: "Food provides essential nutrients for overall health and well-being",
-        category: "Deserts"
+        price: 8,
+        description: "Delicate matcha cake with fresh strawberries, a delightful combination",
+        category: "Cakey"
     }, {
         _id: "12",
-        name: "Vanilla Ice Cream",
+        name: "Rabbit Pancakes",
         image: food_12,
-        price: 12,
-        description: "Food provides essential nutrients for overall health and well-being",
-        category: "Deserts"
+        price: 5,
+        description: "Whimsical rabbit-shaped pancake, fluffy and fun for all ages",
+        category: "Bread"
     },
     {
         _id: "13",
-        name: "Chicken Sandwich",
+        name: "Minty Ice Cream",
         image: food_13,
-        price: 12,
-        description: "Food provides essential nutrients for overall health and well-being",
-        category: "Sandwich"
+        price: 1,
+        description: "Cool, creamy mint ice cream, a refreshing and delightful treat",
+        category: "Ice Cream"
     },
     {
         _id: "14",
-        name: "Vegan Sandwich",
+        name: "Ladybug Macaron",
         image: food_14,
-        price: 18,
-        description: "Food provides essential nutrients for overall health and well-being",
-        category: "Sandwich"
+        price: 3,
+        description: "Charming ladybug-shaped macaron with a delightful, creamy filling",
+        category: "Macaron"
     }, {
         _id: "15",
-        name: "Grilled Sandwich",
+        name: "Lemony ChocoNut",
         image: food_15,
-        price: 16,
-        description: "Food provides essential nutrients for overall health and well-being",
-        category: "Sandwich"
+        price: 1.5,
+        description: "Zesty lemon donut with rich chocolate glaze, a perfect treat",
+        category: "Donut"
     }, {
         _id: "16",
-        name: "Bread Sandwich",
+        name: "Passion Panna",
         image: food_16,
-        price: 24,
-        description: "Food provides essential nutrients for overall health and well-being",
-        category: "Sandwich"
+        price: 1,
+        description: "Smooth panna cotta with tangy passion fruit, a tropical delight",
+        category: "Panna Cotta"
     }, {
         _id: "17",
-        name: "Cup Cake",
+        name: "Garlic Bread",
         image: food_17,
-        price: 14,
-        description: "Food provides essential nutrients for overall health and well-being",
-        category: "Cake"
+        price: 2,
+        description: "Crusty bread with savory garlic butter, a flavorful delightg",
+        category: "Bread"
     }, {
         _id: "18",
-        name: "Vegan Cake",
+        name: "Turtly Bready",
         image: food_18,
-        price: 12,
-        description: "Food provides essential nutrients for overall health and well-being",
-        category: "Cake"
+        price: 2,
+        description: "Adorable turtle-shaped bread with matcha flavor, a unique treat",
+        category: "Bread"
     }, {
         _id: "19",
-        name: "Butterscotch Cake",
+        name: "Tira Tira",
         image: food_19,
-        price: 20,
-        description: "Food provides essential nutrients for overall health and well-being",
-        category: "Cake"
+        price: 9.6,
+        description: "Classic tiramisu cake with layers of coffee-soaked sponge, simply divine",
+        category: "Cakey"
     }, {
         _id: "20",
-        name: "Sliced Cake",
+        name: "Rummy Gelato",
         image: food_20,
-        price: 15,
-        description: "Food provides essential nutrients for overall health and well-being",
-        category: "Cake"
+        price: 6,
+        description: "Decadent gelato infused with rum, a unique and flavorful treat",
+        category: "Ice Cream"
     }, {
         _id: "21",
-        name: "Garlic Mushroom ",
+        name: "Fruity Croissant",
         image: food_21,
-        price: 14,
-        description: "Food provides essential nutrients for overall health and well-being",
-        category: "Pure Veg"
+        price: 2,
+        description: "Flaky croissant filled with fresh fruits, a refreshing treat",
+        category: "Croissant"
     }, {
         _id: "22",
-        name: "Fried Cauliflower",
+        name: "GingerBread",
         image: food_22,
-        price: 22,
-        description: "Food provides essential nutrients for overall health and well-being",
-        category: "Pure Veg"
+        price: 4.7,
+        description: "Spiced gingerbread with a hint of molasses, perfect for the holidays",
+        category: "Cookies"
     }, {
         _id: "23",
-        name: "Mix Veg Pulao",
+        name: "Caremal Flan",
         image: food_23,
-        price: 10,
-        description: "Food provides essential nutrients for overall health and well-being",
-        category: "Pure Veg"
+        price: 2.3,
+        description: "Smooth, creamy flan with caramel sauce, a classic dessert",
+        category: "Panna Cotta"
     }, {
         _id: "24",
-        name: "Rice Zucchini",
+        name: "Eggy Tart",
         image: food_24,
-        price: 12,
-        description: "Food provides essential nutrients for overall health and well-being",
-        category: "Pure Veg"
+        price: 2,
+        description: "Delicate tart with a buttery crust and luscious filling, irresistible",
+        category: "Croissant"
     },
     {
         _id: "25",
-        name: "Cheese Pasta",
+        name: "Frenchy Crepes",
         image: food_25,
-        price: 12,
-        description: "Food provides essential nutrients for overall health and well-being",
-        category: "Pasta"
+        price: 4.5,
+        description: "Nutella-filled crepes with fresh strawberries and bananas, a delicious combo",
+        category: "Bread"
     },
     {
         _id: "26",
-        name: "Tomato Pasta",
+        name: "Peachy Entremet",
         image: food_26,
-        price: 18,
-        description: "Food provides essential nutrients for overall health and well-being",
-        category: "Pasta"
+        price: 7.5,
+        description: "Elegant peach entremet with layers of delicate flavors, truly exquisite",
+        category: "Cakey"
     }, {
         _id: "27",
-        name: "Creamy Pasta",
+        name: "Matcha Chocote",
         image: food_27,
-        price: 16,
-        description: "Food provides essential nutrients for overall health and well-being",
-        category: "Pasta"
+        price: 2.5,
+        description: "Rich matcha gelato with chocolate swirls, a unique flavor experience",
+        category: "Ice Cream"
     }, {
         _id: "28",
-        name: "Chicken Pasta",
+        name: "Berry White",
         image: food_28,
-        price: 24,
-        description: "Food provides essential nutrients for overall health and well-being",
-        category: "Pasta"
+        price: 1.5,
+        description: "Elegant macaron with white chocolate and blueberry, a delightful combination",
+        category: "Macaron"
     }, {
         _id: "29",
-        name: "Buttter Noodles",
+        name: "Crème Brûlée Donut",
         image: food_29,
-        price: 14,
-        description: "Food provides essential nutrients for overall health and well-being",
-        category: "Noodles"
+        price: 1,
+        description: "Decadent donut with a creamy crème brûlée filling, simply irresistible",
+        category: "Donut"
     }, {
         _id: "30",
-        name: "Veg Noodles",
+        name: "Cheeza",
         image: food_30,
-        price: 12,
-        description: "Food provides essential nutrients for overall health and well-being",
-        category: "Noodles"
+        price: 3,
+        description: "Cheesy, crispy cheeza with a savory blend of flavors",
+        category: "Bread"
     }, {
         _id: "31",
-        name: "Somen Noodles",
+        name: "Souffle",
         image: food_31,
-        price: 20,
-        description: "Food provides essential nutrients for overall health and well-being",
-        category: "Noodles"
+        price: 3.5,
+        description: "Light, airy soufflé with a delicate texture, simply exquisite",
+        category: "Bread"
     }, {
         _id: "32",
-        name: "Cooked Noodles",
+        name: "Grapy Cotta",
         image: food_32,
-        price: 15,
-        description: "Food provides essential nutrients for overall health and well-being",
-        category: "Noodles"
+        price: 1.5,
+        description: "Silky panna cotta with grape essence, a refreshing dessert",
+        category: "Panna Cotta"
     }
 ]

@@ -5,7 +5,7 @@ import { menu_list } from '../../assets/assets'
 const ExploreMenu = ({category, setCategory}) => {
   return (
     <div className='explore-menu' id='explore-menu'>
-        <h1>Explore our menu</h1>
+        <h1>Sweeties Menu</h1>
         <p className='explore-menu-text'>Explore Flourish & Frost's menu of freshly baked bread, exquisite pastries, and decadent cakes. Crafted with the finest ingredients, our treats are perfect for any craving. Treat yourself today!</p>
         <div className='explore-menu-list'>
             {menu_list.map((item, index)=>{
