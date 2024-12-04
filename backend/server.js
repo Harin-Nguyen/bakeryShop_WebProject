@@ -1,7 +1,7 @@
 import express from "express";
-import foodRouter from "./routes/foodRoutes";
+import foodRouter from "./routes/foodRoutes.js";
 import cors from "cors";
-import {connectDB} from "./config/db.js"
+import  connectDB from "./config/db.js";
 
 const app = express();
 const port = process.env.PORT || 5000;
