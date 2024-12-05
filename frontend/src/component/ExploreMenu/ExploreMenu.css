@@ -55,3 +55,10 @@
     padding: 2px;
 
 }
+
+@media (max-width: 1050px){
+    .explore-menu-text{
+        font-size: 14px;
+        max-width: 100%;
+    }
+}
