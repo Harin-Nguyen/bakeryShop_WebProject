@@ -17,3 +17,5 @@ const addCart = async(req, res) => {
         res.json({success: false, message: "Error detected"});
     }
 }
+
+export { addCart };
