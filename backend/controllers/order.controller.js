@@ -1,127 +1,126 @@
-import userModel from "../models/user.model.js";
-import querystring from "qs";
+import orderModel from "../models/order.model.js";
+import userModel from '../models/user.model.js';
 import crypto from "crypto";
-import { vnpayConfig } from "../config/vnpayConfig.js";
+import querystring from "querystring";
+import dotenv from "dotenv";
 
-const addToCart = async (req, res) => {
+dotenv.config();
+
+const frontend_url = "http://localhost:5173";
+const vnpay_return_url = `${frontend_url}/verify`;
+
+const createVNPayUrl = (order, amount) => {
+    const vnp_Params = {
+        vnp_Version: "2.1.0",
+        vnp_Command: "pay",
+        vnp_TmnCode: process.env.VNP_TMNCODE,
+        vnp_Locale: "vn",
+        vnp_CurrCode: "VND",
+        vnp_TxnRef: order._id.toString(),
+        vnp_OrderInfo: `Payment for order #${order._id}`,
+        vnp_OrderType: "billpayment",
+        vnp_Amount: amount * 100,
+        vnp_ReturnUrl: vnpay_return_url,
+        vnp_IpAddr: "127.0.0.1", 
+        vnp_CreateDate: new Date().toISOString().replace(/[-:T]/g, '').slice(0, 14)
+    };
+
+    const sortedParams = Object.fromEntries(Object.entries(vnp_Params).sort());
+
+    const signData = querystring.stringify(sortedParams, "&", "=");
+
+    const hmac = crypto.createHmac("sha512", process.env.VNP_HASHSECRET);
+    const signed = hmac.update(Buffer.from(signData, "utf-8")).digest("hex");
+
+    sortedParams.vnp_SecureHash = signed;
+
+    return `${process.env.VNP_URL}?${querystring.stringify(sortedParams)}`;
+};
+
+const placeOrder = async (req, res) => {
     try {
-        let userData = await userModel.findById(req.body.userId);
-        let cartData = userData.cartData;
-        if (!cartData[req.body.itemId]) {
-            cartData[req.body.itemId] = 1;
-        } else {
-            cartData[req.body.itemId] += 1;
-        }
-        await userModel.findByIdAndUpdate(req.body.userId, { cartData });
-        res.json({ success: true, message: "Added To Cart" });
+        const newOrder = new orderModel({
+            userId: req.body.userId,
+            items: req.body.items,
+            amount: req.body.amount,
+            address: req.body.address
+        });
+
+        await newOrder.save();
+
+        await userModel.findByIdAndUpdate(req.body.userId, { cartData: {} });
+
+        const vnpUrl = createVNPayUrl(newOrder, req.body.amount);
+
+        res.json({ success: true, payment_url: vnpUrl });
     } catch (error) {
         console.error(error);
         res.json({ success: false, message: "Error" });
     }
 };
 
-const removeFromCart = async (req, res) => {
-    try {
-        let userData = await userModel.findById(req.body.userId);
-        let cartData = userData.cartData;
-        if (cartData[req.body.itemId] > 0) {
-            cartData[req.body.itemId] -= 1;
-        }
-        await userModel.findByIdAndUpdate(req.body.userId, { cartData });
-        res.json({ success: true, message: "Removed From Cart" });
-    } catch (error) {
-        console.error(error);
-        res.json({ success: false, message: "Error" });
-    }
-};
-
-const getCart = async (req, res) => {
-    try {
-        let userData = await userModel.findById(req.body.userId);
-        let cartData = userData.cartData;
-        res.json({ success: true, cartData });
-    } catch (error) {
-        console.error(error);
-        res.json({ success: false, message: "Error" });
-    }
-};
-
-const checkoutVNPay = async (req, res) => {
-    try {
-        const { userId, amount } = req.body;
-        const userData = await userModel.findById(userId);
-        const cartData = userData.cartData;
-
-        if (!cartData || Object.keys(cartData).length === 0) {
-            return res.json({ success: false, message: "Cart is empty" });
-        }
-
-        const date = new Date();
-        const createDate = date.toISOString().replace(/[-:T.Z]/g, "").slice(0, 14);
-        const orderId = `${createDate}-${userId}`;
-
-        const vnp_Params = {
-            vnp_Version: "2.1.0",
-            vnp_Command: "pay",
-            vnp_TmnCode: vnpayConfig.vnp_TmnCode,
-            vnp_Locale: "vn",
-            vnp_CurrCode: "VND",
-            vnp_TxnRef: orderId,
-            vnp_OrderInfo: `Payment for Order ${orderId}`,
-            vnp_OrderType: "billpayment",
-            vnp_Amount: amount * 100,
-            vnp_ReturnUrl: vnpayConfig.vnp_ReturnUrl,
-            vnp_IpAddr: req.ip,
-            vnp_CreateDate: createDate,
-        };
-
-        const sortedParams = Object.fromEntries(Object.entries(vnp_Params).sort());
-        const signData = querystring.stringify(sortedParams, { encode: false });
-        const secureHash = crypto
-            .createHmac("sha512", vnpayConfig.vnp_HashSecret)
-            .update(signData)
-            .digest("hex");
-        sortedParams.vnp_SecureHash = secureHash;
-
-        const paymentUrl = `${vnpayConfig.vnp_Url}?${querystring.stringify(sortedParams)}`;
-        res.json({ success: true, paymentUrl });
-    } catch (error) {
-        console.error(error);
-        res.json({ success: false, message: "Error creating VNPay payment" });
-    }
-};
-
-const vnpayReturn = async (req, res) => {
+const verifyOrder = async (req, res) => {
     try {
         const vnp_Params = req.query;
-
         const secureHash = vnp_Params.vnp_SecureHash;
+
         delete vnp_Params.vnp_SecureHash;
         delete vnp_Params.vnp_SecureHashType;
 
         const sortedParams = Object.fromEntries(Object.entries(vnp_Params).sort());
-        const signData = querystring.stringify(sortedParams, { encode: false });
-        const hash = crypto
-            .createHmac("sha512", vnpayConfig.vnp_HashSecret)
-            .update(signData)
-            .digest("hex");
+        const signData = querystring.stringify(sortedParams, "&", "=");
 
-        if (secureHash === hash) {
-            const { vnp_ResponseCode, vnp_TxnRef } = vnp_Params;
+        const hmac = crypto.createHmac("sha512", process.env.VNP_HASHSECRET);
+        const signed = hmac.update(Buffer.from(signData, "utf-8")).digest("hex");
 
-            if (vnp_ResponseCode === "00") {
-                await userModel.findByIdAndUpdate(req.body.userId, { cartData: {} });
-                res.json({ success: true, message: "Payment successful" });
+        if (secureHash === signed) {
+            const orderId = vnp_Params.vnp_TxnRef;
+            const paymentStatus = vnp_Params.vnp_ResponseCode === "00";
+
+            if (paymentStatus) {
+                await orderModel.findByIdAndUpdate(orderId, { payment: true });
+                res.redirect(`${frontend_url}/verify?success=true&orderId=${orderId}`);
             } else {
-                res.json({ success: false, message: "Payment failed" });
+                await orderModel.findByIdAndDelete(orderId);
+                res.redirect(`${frontend_url}/verify?success=false&orderId=${orderId}`);
             }
         } else {
             res.json({ success: false, message: "Invalid signature" });
         }
     } catch (error) {
         console.error(error);
-        res.json({ success: false, message: "Error verifying VNPay payment" });
+        res.json({ success: false, message: "Error" });
     }
 };
 
-export { addToCart, removeFromCart, getCart, checkoutVNPay, vnpayReturn };
+const userOrders = async (req, res) => {
+    try {
+        const orders = await orderModel.find({ userId: req.body.userId });
+        res.json({ success: true, data: orders });
+    } catch (error) {
+        console.error(error);
+        res.json({ success: false, message: "Error" });
+    }
+};
+
+const listOrders = async (req, res) => {
+    try {
+        const orders = await orderModel.find({});
+        res.json({ success: true, data: orders });
+    } catch (error) {
+        console.error(error);
+        res.json({ success: false, message: "Error" });
+    }
+};
+
+const updateStatus = async (req, res) => {
+    try {
+        await orderModel.findByIdAndUpdate(req.body.orderId, { status: req.body.status });
+        res.json({ success: true, message: "Status Updated" });
+    } catch (error) {
+        console.error(error);
+        res.json({ success: false, message: "Error" });
+    }
+};
+
+export { placeOrder, verifyOrder, userOrders, listOrders, updateStatus };
