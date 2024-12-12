@@ -1,5 +1,6 @@
 import express from "express";
 import foodRouter from "./routes/foodRoutes.js";
+import orderRouter from "./routes/orderRoutes.js";
 import cartRouter from "./routes/cartRoutes.js";
 import cors from "cors";
 import  connectDB from "./config/db.js";
@@ -26,6 +27,7 @@ app.listen(port, () => {
 
 connectDB();
 
-app.use("/api/food", foodRouter);
-app.use("/api/cart", cartRouter);
-app.use("/images", express.static('uploads'));
+app.use("/api/food",foodRouter);
+app.use("/images",express.static('uploads'));
+app.use("/api/cart",cartRouter);
+app.use("/api/order",orderRouter);

@@ -1,4 +1,4 @@
-import userModel from "../models/userModel.js";
+import userModel from "../models/user.model.js";
 import querystring from "qs";
 import crypto from "crypto";
 import { vnpayConfig } from "../config/vnpayConfig.js";
