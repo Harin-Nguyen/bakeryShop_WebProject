@@ -1,18 +1,21 @@
-import React, { useState } from 'react'
+import React from 'react'
 import './List.css'
+import { useState } from 'react'
 import axios from "axios"
-import { toast } from "react-toastify"
+import {toast} from "react-toastify"
+import { useEffect } from 'react'
 
 const List = ({url}) => {
 
-  const[list, setList] = useState([]);
-  const fetchList = async () =>{
+  const [list,setList] = useState([]);
+
+  const fetchList = async () => {
     const response = await axios.get(`${url}/api/food/list`);
-    console.log(response.data);
     if (response.data.success) {
       setList(response.data.data)
     }
-    else{
+    else
+    {
       toast.error("Error")
     }
   }
