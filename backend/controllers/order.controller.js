@@ -1,105 +1,115 @@
 import orderModel from "../models/order.model.js";
 import userModel from '../models/user.model.js';
-import crypto from "crypto";
-import querystring from "querystring";
-import dotenv from "dotenv";
-
+import paypal from "@paypal/checkout-server-sdk";
+import dotenv from 'dotenv';
 dotenv.config();
 
-const frontend_url = "http://localhost:5173";
-const vnpay_return_url = `${frontend_url}/verify`;
+const environment = new paypal.core.SandboxEnvironment(
+    process.env.PAYPAL_CLIENT_ID, 
+    process.env.PAYPAL_CLIENT_SECRET
+);
+const paypalClient = new paypal.core.PayPalHttpClient(environment);
+console.log("PayPal Client ID:", process.env.PAYPAL_CLIENT_ID);
+console.log("PayPal Client Secret:", process.env.PAYPAL_CLIENT_SECRET ? "****" : "Missing");
 
-const createVNPayUrl = (order, amount) => {
-    const vnp_Params = {
-        vnp_Version: "2.1.0",
-        vnp_Command: "pay",
-        vnp_TmnCode: process.env.VNP_TMNCODE,
-        vnp_Locale: "vn",
-        vnp_CurrCode: "VND",
-        vnp_TxnRef: order._id.toString(),
-        vnp_OrderInfo: `Payment for order #${order._id}`,
-        vnp_OrderType: "billpayment",
-        vnp_Amount: amount * 100,
-        vnp_ReturnUrl: vnpay_return_url,
-        vnp_IpAddr: "127.0.0.1", 
-        vnp_CreateDate: new Date().toISOString().replace(/[-:T]/g, '').slice(0, 14)
-    };
 
-    const sortedParams = Object.fromEntries(Object.entries(vnp_Params).sort());
-
-    const signData = querystring.stringify(sortedParams, "&", "=");
-
-    const hmac = crypto.createHmac("sha512", process.env.VNP_HASHSECRET);
-    const signed = hmac.update(Buffer.from(signData, "utf-8")).digest("hex");
-
-    sortedParams.vnp_SecureHash = signed;
-
-    return `${process.env.VNP_URL}?${querystring.stringify(sortedParams)}`;
-};
+const frontend_url = "http://localhost:5174";
 
 const placeOrder = async (req, res) => {
     try {
+        const { items, amount, address } = req.body;
+        const userId = req.user?.id;
+
+
+        console.log(userId,items,amount,address)
+
+        if (!userId || !items || !amount || !address) {
+            return res.status(400).json({ success: false, message: "Missing required fields." });
+        }
+
         const newOrder = new orderModel({
-            userId: req.body.userId,
-            items: req.body.items,
-            amount: req.body.amount,
-            address: req.body.address
+            userId: userId,
+            items: items,
+            amount: amount,
+            address: address,
+            paymentMethod: 'paypal'
         });
 
         await newOrder.save();
+        await userModel.findByIdAndUpdate(userId, { cartData: {} });
 
-        await userModel.findByIdAndUpdate(req.body.userId, { cartData: {} });
+        const totalAmount = items.reduce((total, item) => 
+            total + (item.price * item.quantity), 0) + 2;
 
-        const vnpUrl = createVNPayUrl(newOrder, req.body.amount);
+        const request = new paypal.orders.OrdersCreateRequest();
+        request.prefer('return=representation');
+        request.requestBody({
+            intent: 'CAPTURE',
+            purchase_units: [{
+                amount: {
+                    currency_code: 'USD',
+                    value: totalAmount.toFixed(2) 
+                },
+                reference_id: newOrder._id.toString()
+            }],
+            application_context: {
+                return_url: `${frontend_url}/verify?success=true&orderId=${newOrder._id}`,
+                cancel_url: `${frontend_url}/verify?success=false&orderId=${newOrder._id}`
+            }
+        });
 
-        res.json({ success: true, payment_url: vnpUrl });
+        const paypalOrder = await paypalClient.execute(request);
+        res.json({ 
+            success: true, 
+            session_url: paypalOrder.result.links.find(link => link.rel === "approve").href 
+        });
+
     } catch (error) {
         console.error(error);
-        res.json({ success: false, message: "Error" });
+        res.status(500).json({ success: false, message: "Error creating order." });
     }
 };
 
 const verifyOrder = async (req, res) => {
+    const { orderId, paymentId, PayerID } = req.body;
+
     try {
-        const vnp_Params = req.query;
-        const secureHash = vnp_Params.vnp_SecureHash;
+        if (!orderId || !paymentId || !PayerID) {
+            return res.status(400).json({ success: false, message: "Missing required parameters." });
+        }
 
-        delete vnp_Params.vnp_SecureHash;
-        delete vnp_Params.vnp_SecureHashType;
+        const captureRequest = new paypal.orders.OrdersCaptureRequest(paymentId);
+        const capture = await paypalClient.execute(captureRequest);
 
-        const sortedParams = Object.fromEntries(Object.entries(vnp_Params).sort());
-        const signData = querystring.stringify(sortedParams, "&", "=");
-
-        const hmac = crypto.createHmac("sha512", process.env.VNP_HASHSECRET);
-        const signed = hmac.update(Buffer.from(signData, "utf-8")).digest("hex");
-
-        if (secureHash === signed) {
-            const orderId = vnp_Params.vnp_TxnRef;
-            const paymentStatus = vnp_Params.vnp_ResponseCode === "00";
-
-            if (paymentStatus) {
-                await orderModel.findByIdAndUpdate(orderId, { payment: true });
-                res.redirect(`${frontend_url}/verify?success=true&orderId=${orderId}`);
-            } else {
-                await orderModel.findByIdAndDelete(orderId);
-                res.redirect(`${frontend_url}/verify?success=false&orderId=${orderId}`);
-            }
+        if (capture.result.status === 'COMPLETED') {
+            await orderModel.findByIdAndUpdate(orderId, { 
+                payment: true, 
+                paymentMethod: 'paypal',
+                paypalTransactionId: paymentId
+            });
+            res.json({ success: true, message: "Payment Successful" });
         } else {
-            res.json({ success: false, message: "Invalid signature" });
+            await orderModel.findByIdAndDelete(orderId);
+            res.json({ success: false, message: "Payment Failed" });
         }
     } catch (error) {
         console.error(error);
-        res.json({ success: false, message: "Error" });
+        res.status(500).json({ success: false, message: "Error verifying payment" });
     }
 };
 
 const userOrders = async (req, res) => {
     try {
-        const orders = await orderModel.find({ userId: req.body.userId });
+        const userId = req.user?.id;
+        if (!userId) {
+            return res.status(400).json({ success: false, message: "User not authenticated" });
+        }
+
+        const orders = await orderModel.find({ userId });
         res.json({ success: true, data: orders });
     } catch (error) {
         console.error(error);
-        res.json({ success: false, message: "Error" });
+        res.status(500).json({ success: false, message: "Error fetching user orders" });
     }
 };
 
@@ -109,17 +119,22 @@ const listOrders = async (req, res) => {
         res.json({ success: true, data: orders });
     } catch (error) {
         console.error(error);
-        res.json({ success: false, message: "Error" });
+        res.status(500).json({ success: false, message: "Error fetching orders" });
     }
 };
 
 const updateStatus = async (req, res) => {
     try {
-        await orderModel.findByIdAndUpdate(req.body.orderId, { status: req.body.status });
+        const { orderId, status } = req.body;
+        if (!orderId || !status) {
+            return res.status(400).json({ success: false, message: "Order ID and status are required" });
+        }
+
+        await orderModel.findByIdAndUpdate(orderId, { status });
         res.json({ success: true, message: "Status Updated" });
     } catch (error) {
         console.error(error);
-        res.json({ success: false, message: "Error" });
+        res.status(500).json({ success: false, message: "Error updating order status" });
     }
 };
 
