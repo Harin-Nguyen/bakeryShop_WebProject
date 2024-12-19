@@ -19,9 +19,9 @@ const Orders = ({url}) => {
     }
   }
 
-  // useEffect(()=>{
-  //   fetchAllOrders();
-  // },[])
+  useEffect(()=>{
+    fetchAllOrders();
+  },[])
 
   return (
     <div className='order add'>

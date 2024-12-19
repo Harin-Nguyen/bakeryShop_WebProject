@@ -50,22 +50,36 @@ const removeCart = async (req, res) => {
     }
 };
 
+
 const getCart = async (req, res) => {
     try {
-        if (!req.body.userId) {
-            return res.status(400).json({ success: false, message: "User ID is required" });
+        const userId = req.user?.id;
+        console.log("Auth Token:", req.headers.token); // Debug log
+        console.log("User ID from token:", userId);    // Debug log
+
+        if (!userId) {
+            return res.status(401).json({ 
+                success: false, 
+                message: "User not authenticated" 
+            });
         }
 
-        let userData = await userModel.findById(req.body.userId);
+        let userData = await userModel.findById(userId);
         if (!userData) {
-            return res.status(404).json({ success: false, message: "User not found" });
+            return res.status(404).json({ 
+                success: false, 
+                message: "User not found" 
+            });
         }
 
         let cartData = userData.cartData || {};
         res.json({ success: true, cartData });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ success: false, message: "Error detected" });
+        console.error("Error in getCart:", error);
+        res.status(500).json({ 
+            success: false, 
+            message: "Error detected" 
+        });
     }
 };
 

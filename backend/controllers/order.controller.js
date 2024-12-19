@@ -13,7 +13,7 @@ console.log("PayPal Client ID:", process.env.PAYPAL_CLIENT_ID);
 console.log("PayPal Client Secret:", process.env.PAYPAL_CLIENT_SECRET ? "****" : "Missing");
 
 
-const frontend_url = "http://localhost:5174";
+const frontend_url = "http://localhost:5173";
 
 const placeOrder = async (req, res) => {
     try {
