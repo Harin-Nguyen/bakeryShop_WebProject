@@ -29,7 +29,7 @@
     font-size: 1.6vw;
 }
 
-.header-contents button{
+.header-contents a{
     border: none;
     color: #747474;
     font-weight: 500;
