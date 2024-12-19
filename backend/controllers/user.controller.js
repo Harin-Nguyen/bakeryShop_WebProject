@@ -29,7 +29,7 @@ const login = async(req, res) => {
 }
 
 const register = async(req, res) => {
-    const {username, password, email} = req.body;
+    const {name, password, email} = req.body;
     try {
         const ifExists = await userModel.findOne({email});
         if(ifExists) {
@@ -50,7 +50,7 @@ const register = async(req, res) => {
         const hashed = await bcrypt.hash(password, salt);
 
         const newUser = new userModel({
-            username: username,
+            name: name,
             email: email,
             password: hashed
         });
