@@ -61,10 +61,9 @@
     width: max(15vw, 200px);
     padding: 12px 0px;
     cursor: pointer;
-    margin-left: auto;
 }
 
-/* .cart-promocode{
+.cart-promocode{
     flex: 0.7;
 }
 
@@ -95,7 +94,7 @@
     width: max(5vw, 90px);
     background-color: #2749a9;
     padding: 10px 5px;
-} */
+}
 
 @media (max-width: 750px){
     .cart-bottom{

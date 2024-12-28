@@ -60,7 +60,7 @@ const Cart = () => {
           </div>
           <button onClick={()=>navigate('/order')}>PROCEED TO CHECKOUT</button>
         </div>
-        {/* <div className="cart-promocode">
+        <div className="cart-promocode">
           <div>
             <p>Enter your promo code here!</p>
             <div className='cart-promocode-input'>
@@ -68,7 +68,7 @@ const Cart = () => {
               <button>Submit</button>
             </div>
           </div>
-        </div> */}
+        </div>
       </div>
     </div>
   )
