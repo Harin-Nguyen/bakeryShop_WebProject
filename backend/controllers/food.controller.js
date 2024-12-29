@@ -103,4 +103,30 @@ const filter = async (req, res) => {
   }
 };
 
-export { addFood, listFood, removeFood, searchFood, filter };
+const getFoodDetail = async (req, res) => {
+  const { foodId } = req.params;
+
+  try {
+    const food = await foodModel.findById(foodId);
+
+    if (!food) {
+      return res.status(404).json({ message: "Food not found" });
+    }
+
+    const relatedFoods = await foodModel
+      .find({
+        category: food.category,
+        _id: { $ne: foodId },
+      })
+      .limit(5);
+
+    res.status(200).json({
+      food,
+      relatedFoods,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export { addFood, listFood, removeFood, searchFood, filter, getFoodDetail };

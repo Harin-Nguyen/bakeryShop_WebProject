@@ -2,6 +2,7 @@ import express from "express";
 import {
   addFood,
   filter,
+  getFoodDetail,
   listFood,
   removeFood,
   searchFood,
@@ -24,5 +25,6 @@ foodRouter.get("/list", listFood);
 foodRouter.post("/remove", removeFood);
 foodRouter.get("/search", searchFood);
 foodRouter.get("/filter", filter);
+foodRouter.get('/:foodId', getFoodDetail);
 
 export default foodRouter;
